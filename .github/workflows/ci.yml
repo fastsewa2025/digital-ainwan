@@ -1,0 +1,99 @@
+# Runs on every push and pull request. A red cross means: do not deploy this version.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  server:
+    name: Server (lint and tests)
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:7
+        ports: ['27017:27017']
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1})'"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    defaults:
+      run:
+        working-directory: server
+    env:
+      # The tests DELETE everything in this database, so its name must contain "test".
+      TEST_MONGO_URI: mongodb://127.0.0.1:27017/ainwan_ci_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  client:
+    name: Website (lint and build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  image:
+    name: Docker image (builds and starts)
+    needs: [server, client]
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:7
+        ports: ['27017:27017']
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1})'"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: The compose file is valid
+        run: |
+          printf 'SITE_ADDRESS=ainwan.example.in\nPUBLIC_URL=https://ainwan.example.in\nJWT_SECRET=%s\nMONGO_ROOT_PASSWORD=%s\nAPP_DB_PASSWORD=%s\n' \
+            "$(openssl rand -hex 24)" "$(openssl rand -hex 12)" "$(openssl rand -hex 12)" > "$RUNNER_TEMP/ci.env"
+          docker compose --env-file "$RUNNER_TEMP/ci.env" config --quiet
+
+      - name: Build the image
+        run: docker build -t ainwan:ci .
+
+      - name: The image starts and answers
+        run: |
+          docker run -d --name ainwan --network host \
+            -e MONGO_URI=mongodb://127.0.0.1:27017/ainwan_ci_smoke \
+            -e PUBLIC_URL=https://ainwan.example.in \
+            -e JWT_SECRET="$(openssl rand -hex 24)" \
+            ainwan:ci
+          ok=0
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:5000/api/health; then ok=1; break; fi
+            sleep 2
+          done
+          docker logs ainwan
+          test "$ok" = 1
+          curl -fsS http://127.0.0.1:5000/ | grep -q 'id="root"'
+          curl -fsS http://127.0.0.1:5000/some/page/that/is/not/a/file | grep -q 'id="root"'

@@ -1,0 +1,22 @@
+# The front door. {$SITE_ADDRESS} comes from .env:
+#   a domain name (ainwan.example.in)  -> https, certificate obtained and renewed automatically
+#   :80                                -> plain http, only for a trial on a bare IP address
+{$SITE_ADDRESS} {
+	# The largest file the admin area accepts is a 30 MB audio recording.
+	request_body {
+		max_size 32MB
+	}
+
+	header -Server
+
+	reverse_proxy app:5000 {
+		health_uri /api/health
+		health_interval 30s
+		health_timeout 5s
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

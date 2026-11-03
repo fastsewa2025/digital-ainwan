@@ -1,0 +1,84 @@
+/* ------------------------------------------------------------- photos */
+.photo { position: relative; overflow: hidden; background: var(--band); }
+.photo img { width: 100%; height: 100%; object-fit: cover; }
+.photo--ph svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* ------------------------------------------- home: all work in one bar */
+.vbar { margin-bottom: 2rem; }
+.vbar__bar { display: flex; gap: 3px; height: 28px; }
+.vbar__seg { display: block; min-width: 6px; }
+.vbar__seg--done { background: var(--neem); }
+.vbar__seg--now { background: var(--haldi); }
+.vbar__seg--next { background: var(--soil); }
+.vbar__legend { display: flex; flex-wrap: wrap; gap: .4rem 1.8rem; margin-top: .8rem; }
+.vbar__money { margin-top: .6rem; color: var(--ink-soft); }
+.vbar__gap { display: inline-block; width: 1.6rem; }
+
+/* ----------------------------------------------- project rows (ruled) */
+.prows { border-top: 1px solid var(--line); }
+.prow { border-bottom: 1px solid var(--line); }
+.prow__link { display: grid; grid-template-columns: 96px 1fr; gap: .6rem 1rem; align-items: center; padding: 1rem 0; color: inherit; text-decoration: none; }
+.prow__link:hover { color: inherit; }
+.prow__link:hover .prow__title { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; color: var(--neem); }
+.prow__title { font-size: 1.25rem; }
+.prow__meta { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1.25rem; margin-top: .3rem; }
+.prow__bar { grid-column: 1 / -1; }
+.prow__pct { margin-bottom: .25rem; font-weight: 700; }
+@media (min-width: 760px) {
+  .prow__link { grid-template-columns: 124px 1fr 260px; gap: 1.5rem; }
+  .prow__bar { grid-column: auto; }
+}
+
+/* ------------------------------------------------------- notice rows */
+.nrows { border-top: 1px solid var(--line-strong); }
+.nrow { display: grid; gap: .1rem; padding: .85rem 0; color: inherit; text-decoration: none; border-bottom: 1px solid var(--line); }
+.nrow:hover { color: inherit; }
+.nrow:hover .nrow__title { color: var(--neem); text-decoration: underline; text-underline-offset: 3px; }
+.nrow__date { font-size: .98rem; font-weight: 600; color: var(--ink-soft); }
+.nrow__title { font-size: 1.12rem; font-weight: 600; line-height: 1.5; }
+.nrow__cat { font-size: .95rem; color: var(--ink-soft); }
+@media (min-width: 760px) {
+  .nrow { grid-template-columns: 150px 1fr 190px; gap: 1.25rem; align-items: baseline; }
+}
+
+/* ---------------------------------------------------- festival tiles */
+.ftiles { display: grid; gap: 1.75rem 1.5rem; }
+@media (min-width: 700px) { .ftiles { grid-template-columns: repeat(3, 1fr); } }
+.ftile { display: block; color: inherit; text-decoration: none; }
+.ftile:hover { color: inherit; }
+.ftile:hover .ftile__title { color: var(--neem); text-decoration: underline; text-underline-offset: 4px; }
+.ftile__date { margin-top: .75rem; font-size: .95rem; font-weight: 600; color: var(--ink-soft); }
+.ftile__title { margin-top: .1rem; font-size: 1.3rem; }
+
+/* ---------------------------------------- portraits (arch-shaped, like a niche) */
+.faces { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.6rem 1.25rem; }
+@media (min-width: 700px) { .faces { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1000px) { .faces { grid-template-columns: repeat(6, 1fr); } }
+.face { display: block; color: inherit; text-decoration: none; }
+.face:hover { color: inherit; }
+.face:hover .face__name { color: var(--neem); text-decoration: underline; text-underline-offset: 3px; }
+.face__photo { border-radius: 999px 999px 0 0; }
+.face__name { margin-top: .7rem; font-size: 1.15rem; }
+.face__line { margin-top: .15rem; font-size: .95rem; line-height: 1.5; color: var(--ink-soft); }
+
+/* ------------------------------------------------------- diaspora band */
+.band--mitti { background: var(--mitti); color: #f6ede2; }
+.band--mitti h2 { color: #fff; }
+.bridge { display: grid; gap: 1.5rem; align-items: center; }
+@media (min-width: 800px) { .bridge { grid-template-columns: 1fr auto; gap: 3rem; } }
+.bridge__text { margin-top: .6rem; max-width: 58ch; font-size: 1.1rem; }
+
+/* -------------------------------------------------------- shared bits */
+.pager { display: flex; align-items: center; gap: 1rem; margin-top: 2rem; }
+.pager__now { font-weight: 600; }
+.backlink { display: inline-block; margin-bottom: 1.25rem; font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
+.chip {
+  min-height: 40px; padding: .3rem 1rem; font-weight: 600; font-size: 1rem; color: var(--ink);
+  background: #fff; border: 1.5px solid var(--line-strong); border-radius: var(--r);
+}
+.chip:hover { border-color: var(--ink); }
+.chip[aria-pressed='true'] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; margin-bottom: 1.5rem; }
+.toolbar .field { flex: 1 1 220px; }
+.toolbar__grow { flex: 1 1 280px; }

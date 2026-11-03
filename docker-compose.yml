@@ -1,0 +1,95 @@
+# Digital Ainwan on one small server.
+#
+#   caddy : the front door. Gets and renews the HTTPS certificate by itself.
+#   app   : the website and its API (Node).
+#   mongo : the database. Has a password and cannot be reached from outside.
+#
+# Start:   docker compose up -d --build
+# Logs:    docker compose logs -f app
+# Settings come from the file ".env" (copy .env.example, or run: node scripts/gen-secrets.mjs).
+
+name: ainwan
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"   # without a limit, logs slowly fill a small disk
+    max-file: "3"
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?Set SITE_ADDRESS in .env (your domain, for example ainwan.example.in)}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data        # the certificate lives here: do not delete this volume
+      - caddy_config:/config
+    networks: [edge]
+    logging: *logging
+
+  app:
+    build: .
+    image: digital-ainwan:latest
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "5000"
+      TRUST_PROXY: "1"          # exactly one proxy (Caddy) stands in front of the app
+      PUBLIC_URL: ${PUBLIC_URL:?Set PUBLIC_URL in .env (for example https://ainwan.example.in)}
+      COOKIE_SECURE: ${COOKIE_SECURE:-}
+      JWT_SECRET: ${JWT_SECRET:?Run node scripts/gen-secrets.mjs, or fill JWT_SECRET in .env}
+      JWT_EXPIRES_HOURS: ${JWT_EXPIRES_HOURS:-}
+      MONGO_URI: mongodb://${APP_DB_USER:-ainwan}:${APP_DB_PASSWORD:?Fill APP_DB_PASSWORD in .env}@mongo:27017/${APP_DB_NAME:-ainwan}?authSource=${APP_DB_NAME:-ainwan}
+    volumes:
+      - uploads:/data/uploads   # photos, audio and PDFs added from the admin area
+    networks: [edge, backend]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    logging: *logging
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    # A small cache so the database leaves room for the app on a 2 GB server.
+    command: ["mongod", "--auth", "--wiredTigerCacheSizeGB", "0.5"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?Fill MONGO_ROOT_PASSWORD in .env}
+      APP_DB_NAME: ${APP_DB_NAME:-ainwan}
+      APP_DB_USER: ${APP_DB_USER:-ainwan}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Fill APP_DB_PASSWORD in .env}
+    volumes:
+      - mongo_data:/data/db     # all content and accounts: this is what the backups protect
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/01-app-user.js:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet -u root -p \"$$MONGO_INITDB_ROOT_PASSWORD\" --authenticationDatabase admin --eval 'db.adminCommand({ping:1}).ok' | grep -q 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 6
+      start_period: 40s
+    networks: [backend]
+    security_opt: ["no-new-privileges:true"]
+    logging: *logging
+
+networks:
+  edge: {}
+  backend:
+    internal: true              # the database network has no way out to the internet
+
+volumes:
+  mongo_data:
+  uploads:
+  caddy_data:
+  caddy_config:
