@@ -1,0 +1,142 @@
+/* ------------------------------------------------------------------
+   Site frame: header, menus, footer, the phone's bottom menu.
+   Mobile first: everything is designed at 360px and grows from there.
+   ------------------------------------------------------------------ */
+
+/* ------------------------------------------------------------- header */
+/* On phones the header scrolls away (the bottom menu is always there); on big screens it stays on top. */
+.header { position: relative; z-index: 30; background: var(--band); border-bottom: 1px solid var(--line); }
+@media (min-width: 1100px) { .header { position: sticky; top: 0; } }
+.header__in { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 68px; }
+.brand { display: flex; align-items: center; gap: .55rem; color: inherit; text-decoration: none; min-width: 0; }
+.brand:hover { color: inherit; }
+.brand__leaf { width: 40px; height: 40px; flex: none; color: var(--neem); }
+.brand__name { display: block; font-family: var(--font-display); font-size: 1.7rem; line-height: 1; color: var(--mitti); }
+.brand__sub { display: block; margin-top: .15rem; font-size: .7rem; line-height: 1.1; letter-spacing: .06em; color: var(--ink-soft); }
+.header__tools { display: flex; align-items: center; gap: .3rem; flex: none; }
+
+.iconbtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .35rem;
+  min-width: 44px; height: 44px; padding: 0 .7rem; border-radius: 999px;
+  font: 700 .95rem/1 var(--font-body); color: var(--ink); text-decoration: none;
+  background: var(--earth-2); border: 0;
+}
+.iconbtn:hover { background: #e6d9bb; color: var(--ink); }
+.iconbtn svg { width: 22px; height: 22px; flex: none; }
+.iconbtn--lang { background: transparent; border: 2px solid var(--neem); color: var(--neem); min-width: 44px; padding: 0 .55rem; }
+.iconbtn--lang:hover { background: var(--neem); color: #fff; }
+.iconbtn--round { padding: 0; width: 44px; }
+.iconbtn__label { display: none; }
+@media (min-width: 980px) { .iconbtn--account .iconbtn__label { display: inline; } .iconbtn--account { padding: 0 1rem 0 .7rem; } }
+
+.nav { display: none; align-items: stretch; gap: .1rem; margin-inline: auto 0; }
+.nav__item { position: relative; display: flex; }
+.nav__link, .nav__btn {
+  display: inline-flex; align-items: center; gap: .35rem; min-height: 68px; padding: .5rem .8rem;
+  font: 700 1rem/1.2 var(--font-body); color: var(--ink); text-decoration: none;
+  background: none; border: 0; border-bottom: 3px solid transparent; border-top: 3px solid transparent;
+}
+.nav__link:hover, .nav__btn:hover { color: var(--mitti); }
+.nav__link[aria-current='page'], .nav__btn[data-active='true'] { color: var(--mitti); border-bottom-color: var(--haldi); }
+.nav__btn::after { content: ''; width: .42rem; height: .42rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); }
+.nav__menu {
+  position: absolute; top: 100%; left: 0; min-width: 250px; padding: .4rem;
+  background: #fff; border: 1px solid var(--line); border-radius: var(--r); box-shadow: 0 12px 28px rgba(36, 25, 15, .12);
+}
+.nav__menu a { display: block; padding: .6rem .8rem; border-radius: var(--r-sm); color: var(--ink); text-decoration: none; font-weight: 500; }
+.nav__menu a:hover { background: var(--band); color: var(--neem); }
+.nav__menu a[aria-current='page'] { color: var(--neem); font-weight: 700; }
+@media (min-width: 1100px) {
+  .nav { display: flex; }
+  .iconbtn--menu { display: none; }
+}
+
+/* Phone menu: opens under the header. */
+.drawer { position: fixed; inset: 69px 0 0; z-index: 29; overflow-y: auto; background: var(--band); padding: .5rem 0 calc(2rem + var(--bottom-nav)); }
+.drawer__account { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .9rem 1rem; margin: .5rem 0 .25rem; background: #fff; border: 1px solid var(--line); border-radius: var(--r); }
+.drawer__account p { font-weight: 700; }
+.drawer__group { padding-block: .5rem; border-bottom: 1px solid var(--line); }
+.drawer__title { font-family: var(--font-display); font-size: 1.25rem; color: var(--mitti); padding: .35rem 0; }
+.drawer a.drawer__link { display: flex; align-items: center; min-height: 44px; color: var(--ink); text-decoration: none; font-weight: 500; }
+.drawer a.drawer__link[aria-current='page'] { color: var(--neem); font-weight: 700; }
+
+/* ------------------------------------------------------------ search */
+.searchbar { padding-block: .75rem; background: var(--band); border-bottom: 1px solid var(--line); }
+.searchbar form { display: flex; gap: .5rem; }
+.searchbar .input { flex: 1; }
+
+/* ---------------------------------------------- bands and section head */
+.band { padding-block: clamp(40px, 7vw, 76px); }
+.band--tint { background: var(--earth-2); }
+.band--soil { background: var(--soil-dark); color: #f3ebe0; }
+.band--soil h2 { color: #fff; }
+.sechead { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.4rem; }
+.sechead h2 { line-height: 1.15; }
+.sechead__sub { margin-top: .35rem; color: var(--ink-soft); font-size: 1rem; }
+.sechead__more { flex: none; font-weight: 700; }
+
+/* --------------------------------------------------- module page heads */
+.pagehead { padding-top: clamp(28px, 5vw, 52px); color: #fff; }
+.pagehead__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.pagehead__title { margin: 0; font: 400 clamp(2.1rem, 5vw, 3.2rem)/1.25 var(--font-display); color: inherit; text-wrap: balance; }
+.pagehead__intro { max-width: 62ch; margin-top: .45rem; font-size: 1.1rem; }
+.pagehead--sanskriti { background: var(--haldi); color: var(--ink); --tab: rgba(255,255,255,.4); }
+.pagehead--vikas { background: var(--neem); --tab: rgba(255,255,255,.16); }
+.pagehead--sampark { background: var(--mitti); --tab: rgba(255,255,255,.16); }
+.pagehead--plain { background: var(--band); color: var(--mitti); padding-bottom: clamp(24px, 4vw, 40px); }
+.pagehead--plain .pagehead__intro { color: var(--ink); }
+.subnav { display: flex; gap: .3rem; margin-top: 1.5rem; overflow-x: auto; scrollbar-width: none; }
+.subnav::-webkit-scrollbar { display: none; }
+.subnav a { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: .5rem 1.05rem; background: var(--tab); color: inherit; font-weight: 700; text-decoration: none; border-radius: var(--r) var(--r) 0 0; }
+.subnav a:hover { color: inherit; background: rgba(255,255,255,.3); }
+.subnav a[aria-current='page'] { background: var(--band); color: var(--ink); }
+.page { padding-block: clamp(28px, 5vw, 56px) clamp(48px, 8vw, 88px); }
+/* Keeps the footer below the screen while a page is still loading, so nothing jumps when it arrives. */
+#main { min-height: 100vh; }
+
+/* Share on WhatsApp: on every page head and every notice. */
+.sharebtn { flex: none; display: inline-flex; align-items: center; gap: .45rem; min-height: 44px; padding: .35rem .9rem; border-radius: 999px; background: rgba(255,255,255,.92); color: var(--ink); font-weight: 700; font-size: .95rem; text-decoration: none; border: 0; }
+.sharebtn:hover { background: #fff; color: var(--neem); }
+.sharebtn svg { width: 20px; height: 20px; color: #1f8f4e; }
+.pagehead--plain .sharebtn { background: #fff; border: 1px solid var(--line); }
+
+/* ------------------------------------------------------------- footer */
+.footer { background: var(--soil-dark); color: #e9dfcd; padding-block: 2.6rem 2rem; }
+.footer a { color: #fff; }
+.footer__name { font-family: var(--font-display); font-size: 2.6rem; line-height: 1; color: #fff; }
+.footer__tag { margin-top: .35rem; color: #d9cdb8; }
+.footer__grid { display: grid; gap: 1.75rem; }
+@media (min-width: 820px) { .footer__grid { grid-template-columns: 1.1fr 1.2fr 1fr; align-items: start; } }
+.footer h2 { color: #fff; font: 700 1.05rem/1.4 var(--font-body); margin-bottom: .5rem; }
+.footer__contact { display: grid; gap: .3rem; }
+.footer__links { display: grid; grid-template-columns: 1fr 1fr; gap: .2rem 1rem; }
+.footer__links a { display: inline-flex; align-items: center; min-height: 40px; }
+.footer__fine { margin-top: 2rem; padding-top: 1.1rem; border-top: 1px solid rgba(255,255,255,.18); font-size: .95rem; line-height: 1.6; color: #d6c8b4; display: grid; gap: .35rem; }
+.footer__install { margin-top: .5rem; }
+
+/* ------------------------------------- phone: menu fixed at the bottom */
+.bottomnav { display: none; }
+@media (max-width: 1099px) {
+  :root { --bottom-nav: 64px; }
+  .bottomnav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: grid; grid-template-columns: repeat(5, 1fr);
+    height: calc(64px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);
+    background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -4px 16px rgba(36, 25, 15, .06);
+  }
+  .bottomnav a {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .15rem;
+    font-size: .78rem; font-weight: 700; line-height: 1.1; color: var(--ink-soft); text-decoration: none;
+  }
+  .bottomnav svg { width: 24px; height: 24px; }
+  .bottomnav a[aria-current='page'] { color: var(--neem); }
+  .bottomnav a[aria-current='page'] svg { stroke-width: 2.4; }
+  /* While typing, the keyboard needs the room. (Hidden without moving the page, so taps land where aimed.) */
+  body.typing .bottomnav { visibility: hidden; }
+}
+
+.offline { position: sticky; top: 0; z-index: 25; padding: .45rem 1rem; background: var(--ink); color: #fff; font-size: .95rem; text-align: center; }
+
+@media print {
+  .header, .footer, .bottomnav, .offline, .skip, .searchbar { display: none !important; }
+  body { background: #fff; padding: 0; }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "ऐनवां · Digital Ainwan",
+  "short_name": "ऐनवां",
+  "description": "ऐनवां गाँव (जहानाबाद, बिहार) की वेबसाइट: संस्कृति, विकास कार्य, सूचनाएँ और गाँव के लोग।",
+  "lang": "hi",
+  "dir": "ltr",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f1e3",
+  "theme_color": "#1f5c3b",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "सूचना पट्ट", "url": "/vikas/notices", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "विकास कार्य", "url": "/vikas", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
