@@ -31,7 +31,7 @@ jobs:
       # The tests DELETE everything in this database, so its name must contain "test".
       TEST_MONGO_URI: mongodb://127.0.0.1:27017/ainwan_ci_test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -48,7 +48,7 @@ jobs:
       run:
         working-directory: client
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -70,7 +70,7 @@ jobs:
           --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1})'"
           --health-interval 5s --health-timeout 5s --health-retries 12
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: The compose file is valid
         run: |
