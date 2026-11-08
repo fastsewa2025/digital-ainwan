@@ -5,19 +5,19 @@
 #   stage 2: install server packages         (production packages only)
 #   stage 3: the small image that actually runs
 
-FROM node:22-alpine AS site
+FROM node:25-alpine AS site
 WORKDIR /build/client
 COPY client/package.json client/package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY client/ ./
 RUN npm run build
 
-FROM node:22-alpine AS packages
+FROM node:25-alpine AS packages
 WORKDIR /build/server
 COPY server/package.json server/package-lock.json ./
 RUN npm ci --omit=dev --no-audit --no-fund && npm cache clean --force
 
-FROM node:22-alpine AS run
+FROM node:25-alpine AS run
 ENV NODE_ENV=production \
     PORT=5000 \
     UPLOAD_DIR=/data/uploads \
